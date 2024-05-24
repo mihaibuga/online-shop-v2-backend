@@ -5,17 +5,27 @@ namespace OnlineShop.Application.Mappers
 {
 	public static class ProductMappers
 	{
-		public static ProductDTO ToProductDTO(this Product productModel)
+		public static ProductDto ToProductDTO(this Product productModel)
 		{
-			return new ProductDTO
+			return new ProductDto
 			{
-				Id = productModel.Id
+				Id = productModel.Id,
+				Name = productModel.Name,
+				Description = productModel.Description,
+				PreviousPrice = productModel.PreviousPrice,
+				Price = productModel.Price,
 			};
 		}
 
-		public static Product ToProductFromCreateDTO(this CreateProductRequestDTO productDTO)
+		public static Product ToProductFromCreateDTO(this CreateProductRequestDto productDTO)
 		{
-			return new Product();
+			return new Product
+			{
+				Name = productDTO.Name,
+				Description = productDTO.Description,
+				PreviousPrice = productDTO.PreviousPrice,
+				Price = productDTO.Price
+			};
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace OnlineShop.Application.Services
 			_productRepository = productRepository;
 		}
 
-		public async Task<ProductDTO> CreateAsync(CreateProductRequestDTO productDTO)
+		public async Task<ProductDto> CreateAsync(CreateProductRequestDto productDTO)
 		{
 			var productModel = productDTO.ToProductFromCreateDTO();
 
@@ -23,25 +23,25 @@ namespace OnlineShop.Application.Services
 			return productModel.ToProductDTO();
 		}
 
-		public async Task<List<ProductDTO>> GetAllAsync()
+		public async Task<List<ProductDto>> GetAllAsync()
 		{
 			var products = await _productRepository.GetAllAsync();
 			var productsToDTO = products.Select(m => m.ToProductDTO()).ToList();
 			return productsToDTO;
 		}
 
-		public async Task<ProductDTO?> GetByIdAsync(Guid id)
+		public async Task<ProductDto?> GetByIdAsync(Guid id)
 		{
 			var existingProduct = await _productRepository.GetByIdAsync(id);
 			return existingProduct != null ? existingProduct.ToProductDTO() : null;
 		}
 
-		public Task<ProductDTO> UpdateAsync()
+		public Task<ProductDto> UpdateAsync()
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<ProductDTO?> DeleteAsync(Guid id)
+		public async Task<ProductDto?> DeleteAsync(Guid id)
 		{
 			var existingProduct = await _productRepository.DeleteAsync(id);
 			return existingProduct != null ? existingProduct.ToProductDTO() : null;
