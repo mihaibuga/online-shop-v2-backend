@@ -2,7 +2,7 @@
 
 namespace OnlineShop.Application.DTOs.Auth
 {
-	public class RegisterDTO
+	public class RegisterDto
 	{
 		[Required]
 		public string? Username { get; set; }

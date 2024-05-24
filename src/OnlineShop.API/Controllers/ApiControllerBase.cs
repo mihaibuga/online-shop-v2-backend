@@ -6,19 +6,14 @@ namespace OnlineShop.API.Controllers
 	[ApiController]
 	public class ApiControllerBase : ControllerBase
 	{
-		protected IActionResult HandleResult(object result = null, bool success = true, string errorMessage = null, int statusCode = 200)
+		protected IActionResult HandleResult(string? errorMessage, object? result, bool success = true, int statusCode = 200)
 		{
 			if (result == null)
 			{
 				return NotFound();
 			}
 
-			if (success && result == null)
-			{
-				return NotFound();
-			}
-
-			if (success && result != null)
+			if (success)
 			{
 				return StatusCode(statusCode, new
 				{

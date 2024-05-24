@@ -9,10 +9,10 @@ using OnlineShop.Application.DTOs.Auth;
 
 namespace OnlineShop.API.Controllers
 {
-    [Route("api/auth")]
-    public class UserController : ApiControllerBase
-    {
-        private readonly UserManager<AppUser> _userManager;
+	[Route("api/auth")]
+	public class UserController : ApiControllerBase
+	{
+		private readonly UserManager<AppUser> _userManager;
 		private readonly SignInManager<AppUser> _signinManager;
 		private readonly ITokenService _tokenService;
 
@@ -28,7 +28,7 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpPost("register")]
-		public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+		public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
 		{
 			try
 			{
@@ -37,35 +37,42 @@ namespace OnlineShop.API.Controllers
 
 				var appUser = new AppUser
 				{
-					UserName = registerDTO.Username,
-					Email = registerDTO.Email
+					UserName = registerDto.Username,
+					Email = registerDto.Email
 				};
 
-				var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password);
-
-				if (createdUser.Succeeded)
+				if (registerDto.Password != null)
 				{
-					var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+					var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
 
-					if (roleResult.Succeeded)
+					if (createdUser.Succeeded)
 					{
-						return Ok(
-							new NewUserDTO
-							{
-								UserName = appUser.UserName,
-								Email = appUser.Email,
-								Token = _tokenService.CreateToken(appUser)
-							}
-						);
+						var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+
+						if (roleResult.Succeeded)
+						{
+							return Ok(
+								new NewUserDto
+								{
+									UserName = appUser.UserName,
+									Email = appUser.Email,
+									Token = _tokenService.CreateToken(appUser)
+								}
+							);
+						}
+						else
+						{
+							return StatusCode(500, roleResult.Errors);
+						}
 					}
 					else
 					{
-						return StatusCode(500, roleResult.Errors);
+						return StatusCode(500, createdUser.Errors);
 					}
 				}
 				else
 				{
-					return StatusCode(500, createdUser.Errors);
+					return StatusCode(500, "An internal problem has occured! Please try again later!");
 				}
 			}
 			catch (Exception e)
@@ -75,38 +82,47 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpPost("login")]
-		public async Task<IActionResult> Login(LoginDTO loginDTO)
+		public async Task<IActionResult> Login(LoginDto loginDTO)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var user = await _userManager
+			var user = loginDTO.Username != null
+				? await _userManager
 				.Users
 				.FirstOrDefaultAsync(
 					x => x.UserName == loginDTO.Username.ToLower()
-				);
+				)
+				: null;
 
 			if (user == null)
 			{
 				return Unauthorized("Invalid username!");
 			}
 
-			var result = await _signinManager
-				.CheckPasswordSignInAsync(user, loginDTO.Password, false);
+			if (loginDTO.Password != null)
+			{
+				var result = await _signinManager
+					.CheckPasswordSignInAsync(user, loginDTO.Password, false);
 
-			if (!result.Succeeded)
+				if (!result.Succeeded)
+				{
+					return Unauthorized("Username not found and/or password incorrect");
+				}
+
+				return Ok(
+					new NewUserDto
+					{
+						UserName = user.UserName,
+						Email = user.Email,
+						Token = _tokenService.CreateToken(user)
+					}
+				);
+			}
+			else
 			{
 				return Unauthorized("Username not found and/or password incorrect");
 			}
-
-			return Ok(
-				new NewUserDTO
-				{
-					UserName = user.UserName,
-					Email = user.Email,
-					Token = _tokenService.CreateToken(user)
-				}
-			);
 		}
 	}
 }
