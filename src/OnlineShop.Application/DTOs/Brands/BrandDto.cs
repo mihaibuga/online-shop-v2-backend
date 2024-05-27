@@ -1,6 +1,6 @@
-﻿namespace OnlineShop.Application.DTOs.Products
+﻿namespace OnlineShop.Application.DTOs.Brands
 {
-	public class ProductDto : IBaseEntityDto
+	public class BrandDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }
@@ -8,7 +8,5 @@
 		public bool IsEnabled { get; set; }
 		public string Name { get; set; } = string.Empty;
 		public string? Description { get; set; }
-		public decimal? PreviousPrice { get; set; }
-		public decimal Price { get; set; }
 	}
 }
