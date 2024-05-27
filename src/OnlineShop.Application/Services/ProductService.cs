@@ -26,7 +26,7 @@ namespace OnlineShop.Application.Services
 		public async Task<List<ProductDto>> GetAllAsync()
 		{
 			var products = await _productRepository.GetAllAsync();
-			var productsToDTO = products.Select(m => m.ToProductDTO()).ToList();
+			var productsToDTO = products.Select(p => p.ToProductDTO()).ToList();
 			return productsToDTO;
 		}
 
