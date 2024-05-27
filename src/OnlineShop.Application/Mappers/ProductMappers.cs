@@ -1,4 +1,5 @@
-﻿using OnlineShop.Application.DTOs.Products;
+﻿using OnlineShop.Application.DTOs.Brands;
+using OnlineShop.Application.DTOs.Products;
 using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.Mappers
@@ -10,6 +11,9 @@ namespace OnlineShop.Application.Mappers
 			return new ProductDto
 			{
 				Id = productModel.Id,
+				CreatedDate = productModel.CreatedDate,
+				ModifiedDate = productModel.ModifiedDate,
+				IsEnabled = productModel.IsEnabled,
 				Name = productModel.Name,
 				Description = productModel.Description,
 				PreviousPrice = productModel.PreviousPrice,
@@ -21,6 +25,9 @@ namespace OnlineShop.Application.Mappers
 		{
 			return new Product
 			{
+				CreatedDate = productDTO.CreatedDate,
+				ModifiedDate = productDTO.ModifiedDate,
+				IsEnabled = productDTO.IsEnabled,
 				Name = productDTO.Name,
 				Description = productDTO.Description,
 				PreviousPrice = productDTO.PreviousPrice,
