@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,12 +11,17 @@ using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Domain.Interfaces.Services.Authentication;
 using OnlineShop.Domain.Services.Authentication;
 
+using OnlineShop.Application.Interfaces.Brands;
+using OnlineShop.Application.Interfaces.Categories;
+using OnlineShop.Application.Interfaces.InventoryTransactions;
 using OnlineShop.Application.Interfaces.Products;
+using OnlineShop.Application.Interfaces.ProductVariants;
+using OnlineShop.Application.Interfaces.Stocks;
 using OnlineShop.Application.Services;
 
 using OnlineShop.Infrastructure.Data;
-using OnlineShop.Infrastructure.Repositories;
 using OnlineShop.Infrastructure.Identity;
+using OnlineShop.Infrastructure.Repositories;
 
 namespace OnlineShop.Infrastructure
 {
@@ -111,8 +116,23 @@ namespace OnlineShop.Infrastructure
 			});
 
 
+			services.AddScoped<IBrandRepository, BrandRepository>();
+			services.AddScoped<IBrandService, BrandService>();
+
+			services.AddScoped<ICategoryRepository, CategoryRepository>();
+			services.AddScoped<ICategoryService, CategoryService>();
+
+			services.AddScoped<IInventoryTransactionRepository, InventoryTransactionRepository>();
+			services.AddScoped<IInventoryTransactionService, InventoryTransactionService>();
+
 			services.AddScoped<IProductRepository, ProductRepository>();
 			services.AddScoped<IProductService, ProductService>();
+
+			services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
+			services.AddScoped<IProductVariantService, ProductVariantService>();
+
+			services.AddScoped<IStockRepository, StockRepository>();
+			services.AddScoped<IStockService, StockService>();
 
 			services.AddScoped<ITokenService, TokenService>();
 
