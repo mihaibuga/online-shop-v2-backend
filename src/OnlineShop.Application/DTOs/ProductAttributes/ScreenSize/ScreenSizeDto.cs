@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.ProductAttributes.ScreenSize
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.ProductAttributes.ScreenSize
 {
-	public class ScreenSizeDto : IBaseEntityDto
+    public class ScreenSizeDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }

@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.ProductVariants
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.ProductVariants
 {
-	public class CreateProductVariantRequestDto : ICreateBaseEntityRequestDto
+    public class CreateProductVariantRequestDto : ICreateBaseEntityRequestDto
 	{
 		public DateTime CreatedDate { get; set; }
 		public DateTime? ModifiedDate { get; set; }

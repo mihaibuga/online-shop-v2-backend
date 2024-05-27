@@ -1,8 +1,9 @@
-﻿using OnlineShop.Domain.Entities;
+﻿using OnlineShop.Application.Interfaces.BaseEntities;
+using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.Interfaces.Brands
 {
-	public interface IBrandRepository : IBaseRepository<Brand>
+    public interface IBrandRepository : IBaseRepository<Brand>
 	{
 	}
 }

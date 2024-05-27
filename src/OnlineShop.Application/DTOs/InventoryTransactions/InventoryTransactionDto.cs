@@ -1,8 +1,9 @@
-﻿using OnlineShop.Domain.Enums;
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+using OnlineShop.Domain.Enums;
 
 namespace OnlineShop.Application.DTOs.InventoryTransactions
 {
-	public class InventoryTransactionDto : IBaseEntityDto
+    public class InventoryTransactionDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }

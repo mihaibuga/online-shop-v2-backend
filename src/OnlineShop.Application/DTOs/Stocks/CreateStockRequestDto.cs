@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.Stocks
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.Stocks
 {
-	public class CreateStockRequestDto : ICreateBaseEntityRequestDto
+    public class CreateStockRequestDto : ICreateBaseEntityRequestDto
 	{
 		public DateTime CreatedDate { get; set; }
 		public DateTime? ModifiedDate { get; set; }

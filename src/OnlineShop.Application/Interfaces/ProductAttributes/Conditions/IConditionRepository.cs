@@ -1,8 +1,9 @@
-﻿using OnlineShop.Domain.Entities.ProductAttributes;
+﻿using OnlineShop.Application.Interfaces.BaseEntities;
+using OnlineShop.Domain.Entities.ProductAttributes;
 
 namespace OnlineShop.Application.Interfaces.ProductAttributes.Conditions
 {
-	public interface IConditionRepository : IBaseRepository<ConditionAttribute>
+    public interface IConditionRepository : IBaseRepository<ConditionAttribute>
 	{
 	}
 }

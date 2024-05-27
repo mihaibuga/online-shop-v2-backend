@@ -1,9 +1,10 @@
-﻿using OnlineShop.Domain.Enums;
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+using OnlineShop.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineShop.Application.DTOs.InventoryTransactions
 {
-	public class CreateInventoryTransactionRequestDto : ICreateBaseEntityRequestDto
+    public class CreateInventoryTransactionRequestDto : ICreateBaseEntityRequestDto
 	{
 		public DateTime CreatedDate { get; set; }
 		public DateTime? ModifiedDate { get; set; }

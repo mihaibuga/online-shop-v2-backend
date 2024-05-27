@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.Stocks
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.Stocks
 {
-	public class StockDto : IBaseEntityDto
+    public class StockDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }

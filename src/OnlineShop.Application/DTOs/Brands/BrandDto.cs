@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.Brands
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.Brands
 {
-	public class BrandDto : IBaseEntityDto
+    public class BrandDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }

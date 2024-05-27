@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.ProductAttributes.Condition
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.ProductAttributes.Condition
 {
-	public class ConditionDto : IBaseEntityDto
+    public class ConditionDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }

@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.ProductAttributes.Capacity
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.ProductAttributes.Capacity
 {
-	public class CapacityDto : IBaseEntityDto
+    public class CapacityDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }

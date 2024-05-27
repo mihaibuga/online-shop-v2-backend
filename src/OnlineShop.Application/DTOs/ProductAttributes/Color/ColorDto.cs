@@ -1,6 +1,8 @@
-﻿namespace OnlineShop.Application.DTOs.ProductAttributes.Color
+﻿using OnlineShop.Application.DTOs.BaseEntities;
+
+namespace OnlineShop.Application.DTOs.ProductAttributes.Color
 {
-	public class ColorDto : IBaseEntityDto
+    public class ColorDto : IBaseEntityDto
 	{
 		public Guid Id { get; set; }
 		public DateTime CreatedDate { get; set; }
