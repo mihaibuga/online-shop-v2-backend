@@ -10,13 +10,13 @@ using OnlineShop.Application.DTOs.Auth;
 namespace OnlineShop.API.Controllers
 {
 	[Route("api/auth")]
-	public class UserController : ApiControllerBase
+	public class AuthController : ApiControllerBase
 	{
 		private readonly UserManager<AppUser> _userManager;
 		private readonly SignInManager<AppUser> _signinManager;
 		private readonly ITokenService _tokenService;
 
-		public UserController(
+		public AuthController(
 			UserManager<AppUser> userManager,
 			SignInManager<AppUser> signInManager,
 			ITokenService tokenService
