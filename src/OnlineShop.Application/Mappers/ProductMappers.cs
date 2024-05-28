@@ -1,5 +1,4 @@
-﻿using OnlineShop.Application.DTOs.Brands;
-using OnlineShop.Application.DTOs.Products;
+﻿using OnlineShop.Application.DTOs.Products;
 using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.Mappers
