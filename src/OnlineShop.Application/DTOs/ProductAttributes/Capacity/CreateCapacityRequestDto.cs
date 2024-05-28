@@ -5,9 +5,9 @@ namespace OnlineShop.Application.DTOs.ProductAttributes.Capacity
 {
     public class CreateCapacityRequestDto : ICreateBaseEntityRequestDto
 	{
-		public DateTime CreatedDate { get; set; }
-		public DateTime? ModifiedDate { get; set; }
-		public bool IsEnabled { get; set; }
+		public DateTime CreatedDate { get; set; } = DateTime.Now;
+		public DateTime? ModifiedDate { get; set; } = DateTime.Now;
+		public bool IsEnabled { get; set; } = true;
 		[Required]
 		public int Capacity { get; set; }
 	}

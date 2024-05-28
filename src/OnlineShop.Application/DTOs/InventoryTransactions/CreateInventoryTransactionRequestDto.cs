@@ -6,9 +6,9 @@ namespace OnlineShop.Application.DTOs.InventoryTransactions
 {
     public class CreateInventoryTransactionRequestDto : ICreateBaseEntityRequestDto
 	{
-		public DateTime CreatedDate { get; set; }
-		public DateTime? ModifiedDate { get; set; }
-		public bool IsEnabled { get; set; }
+		public DateTime CreatedDate { get; set; } = DateTime.Now;
+		public DateTime? ModifiedDate { get; set; } = DateTime.Now;
+		public bool IsEnabled { get; set; } = true;
 		[Required]
 		public Guid ProductVariantId { get; set; }
 		[Required]
