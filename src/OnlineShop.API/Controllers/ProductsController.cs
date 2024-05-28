@@ -16,6 +16,7 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpPost]
+		[Authorize]
 		public async Task<IActionResult> Create([FromBody] CreateProductRequestDto productDTO)
 		{
 			if (!ModelState.IsValid)
@@ -29,7 +30,6 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpGet]
-		[Authorize]
 		public async Task<IActionResult> GetAll()
 		{
 			var products = await _productService.GetAllAsync();
@@ -57,6 +57,7 @@ namespace OnlineShop.API.Controllers
 
 		[HttpDelete]
 		[Route("{id:Guid}")]
+		[Authorize]
 		public async Task<IActionResult> Delete([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
