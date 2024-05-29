@@ -46,8 +46,8 @@ namespace OnlineShop.API.Controllers
 						return Ok(
 								new NewUserDto
 								{
-									UserName = appUser.UserName,
-									Email = appUser.Email,
+									UserName = appUser.UserName != null ? appUser.UserName : string.Empty,
+									Email = appUser.Email != null ? appUser.Email : string.Empty,
 									Token = _tokenService.CreateToken(appUser)
 								}
 							);

@@ -2,7 +2,7 @@
 
 namespace OnlineShop.Application.DTOs.Auth
 {
-	public class RegisterDto
+	public class GoogleAuthDto
 	{
 		[Required]
 		public required string Username { get; set; }
@@ -10,8 +10,5 @@ namespace OnlineShop.Application.DTOs.Auth
 		[Required]
 		[EmailAddress]
 		public required string Email { get; set; }
-
-		[Required]
-		public required string Password { get; set; }
 	}
 }

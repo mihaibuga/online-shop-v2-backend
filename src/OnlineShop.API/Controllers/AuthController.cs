@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
+using OnlineShop.Application.DTOs.Auth;
 using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Domain.Interfaces.Services.Authentication;
-
-using OnlineShop.Application.DTOs.Auth;
 
 namespace OnlineShop.API.Controllers
 {
@@ -35,7 +32,22 @@ namespace OnlineShop.API.Controllers
 				if (!ModelState.IsValid)
 					return BadRequest(ModelState);
 
-				var appUser = new AppUser
+				//Check if email is already used
+				AppUser? existingUserByEmail = await _userManager.FindByEmailAsync(registerDto.Email);
+
+				if (existingUserByEmail != null)
+				{
+					return BadRequest(new { message = "This email is already associated with an existing account." });
+				}
+
+				//Check if username is already used
+				AppUser? existingUserByUserName = await _userManager.FindByNameAsync(registerDto.Username);
+				if (existingUserByUserName != null)
+				{
+					return BadRequest(new { message = "This username is already used." });
+				}
+
+				AppUser? appUser = new AppUser
 				{
 					UserName = registerDto.Username,
 					Email = registerDto.Email
@@ -43,11 +55,12 @@ namespace OnlineShop.API.Controllers
 
 				if (registerDto.Password != null)
 				{
-					var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
+					IdentityResult? createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
 
 					if (createdUser.Succeeded)
 					{
-						var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+						//Associate user to role
+						IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, "User");
 
 						if (roleResult.Succeeded)
 						{
@@ -84,44 +97,127 @@ namespace OnlineShop.API.Controllers
 		[HttpPost("login")]
 		public async Task<IActionResult> Login(LoginDto loginDTO)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
-			var user = loginDTO.Username != null
-				? await _userManager
-				.Users
-				.FirstOrDefaultAsync(
-					x => x.UserName == loginDTO.Username.ToLower()
-				)
-				: null;
-
-			if (user == null)
+			try
 			{
-				return Unauthorized("Invalid username!");
-			}
+				if (!ModelState.IsValid)
+					return BadRequest(ModelState);
 
-			if (loginDTO.Password != null)
-			{
-				var result = await _signinManager
-					.CheckPasswordSignInAsync(user, loginDTO.Password, false);
-
-				if (!result.Succeeded)
+				//Check if username is already used
+				AppUser? existingUser = await _userManager.FindByNameAsync(loginDTO.Username);
+				if (existingUser == null)
 				{
-					return Unauthorized("Username not found and/or password incorrect");
+					return BadRequest(new { message = "This username is not recognized" });
+				}
+				else
+				{
+					if (loginDTO.Password != null)
+					{
+						var result = await _signinManager
+							.CheckPasswordSignInAsync(existingUser, loginDTO.Password, false);
+
+						if (!result.Succeeded)
+						{
+							return Unauthorized("Username not found and/or password incorrect");
+						}
+
+						return Ok(
+							new NewUserDto
+							{
+								UserName = existingUser.UserName != null ? existingUser.UserName : string.Empty,
+								Email = existingUser.Email != null ? existingUser.Email : string.Empty,
+								Token = _tokenService.CreateToken(existingUser)
+							}
+						);
+					}
+					else
+					{
+						return Unauthorized("Username not found and/or password incorrect");
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				return StatusCode(500, e);
+			}
+		}
+
+		[HttpPost("google")]
+		public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthDto googleUserDto)
+		{
+			try
+			{
+				if (!ModelState.IsValid)
+					return BadRequest(ModelState);
+
+				//Check if google email is already used
+				AppUser? existingUserByGmail = await _userManager.FindByEmailAsync(googleUserDto.Email);
+
+				if (existingUserByGmail != null)
+				{
+					return Ok(
+							new NewUserDto
+							{
+								UserName = existingUserByGmail.UserName != null ? existingUserByGmail.UserName : string.Empty,
+								Email = existingUserByGmail.Email != null ? existingUserByGmail.Email : string.Empty,
+								Token = _tokenService.CreateToken(existingUserByGmail)
+							}
+						);
+				}
+				else
+				{
+					//Check if username is already used
+					AppUser? existingUserByUserName = await _userManager.FindByNameAsync(googleUserDto.Username);
+					if (existingUserByUserName != null)
+					{
+						return Ok(
+							new NewUserDto
+							{
+								UserName = existingUserByUserName.UserName != null ? existingUserByUserName.UserName : string.Empty,
+								Email = existingUserByUserName.Email != null ? existingUserByUserName.Email : string.Empty,
+								Token = _tokenService.CreateToken(existingUserByUserName)
+							}
+						);
+					}
+
+					AppUser? appUser = new AppUser
+					{
+						UserName = googleUserDto.Username,
+						Email = googleUserDto.Email
+					};
+
+					IdentityResult? createdUser = await _userManager.CreateAsync(appUser);
+
+					if (createdUser.Succeeded)
+					{
+						//Associate user to role
+						IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+
+						if (roleResult.Succeeded)
+						{
+							return Ok(
+								new NewUserDto
+								{
+									UserName = appUser.UserName,
+									Email = appUser.Email,
+									Token = _tokenService.CreateToken(appUser)
+								}
+							);
+						}
+						else
+						{
+							return StatusCode(500, roleResult.Errors);
+						}
+					}
+					else
+					{
+						return StatusCode(500, createdUser.Errors);
+					}
 				}
 
-				return Ok(
-					new NewUserDto
-					{
-						UserName = user.UserName,
-						Email = user.Email,
-						Token = _tokenService.CreateToken(user)
-					}
-				);
 			}
-			else
+			catch (Exception e)
 			{
-				return Unauthorized("Username not found and/or password incorrect");
+				return StatusCode(500, e);
 			}
 		}
 	}
