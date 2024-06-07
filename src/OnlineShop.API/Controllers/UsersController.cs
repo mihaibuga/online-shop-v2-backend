@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 using OnlineShop.Application.DTOs.Auth;
 using OnlineShop.Application.DTOs.Users;
-
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Domain.Interfaces.Services.Authentication;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OnlineShop.API.Controllers
 {
@@ -71,10 +72,25 @@ namespace OnlineShop.API.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult GetAll()
-		{
-			var users = _userManager.Users;
-			return Ok(users);
+		public IActionResult GetAll([FromQuery] UserQueryObject query)
+        {
+			var users = _userManager.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                if (query.SortBy.Equals("username", StringComparison.OrdinalIgnoreCase))
+                {
+                    users = query.IsAscending ? users.OrderBy(u => u.UserName) : users.OrderByDescending(u => u.UserName);
+                } else if (query.SortBy.Equals("email", StringComparison.OrdinalIgnoreCase))
+                {
+                    users = query.IsAscending ? users.OrderBy(u => u.Email) : users.OrderByDescending(u => u.Email);
+                } else
+				{
+                    users = users.OrderBy(u => u.UserName);
+                }
+            }
+
+            return Ok(users);
 		}
 
 		[HttpGet("{id:Guid}")]
