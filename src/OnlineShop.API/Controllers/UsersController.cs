@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 using OnlineShop.Application.DTOs.Auth;
 using OnlineShop.Application.DTOs.Users;
 using OnlineShop.Application.Helpers.QueryObjects;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Domain.Interfaces.Services.Authentication;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace OnlineShop.API.Controllers
 {
@@ -72,10 +74,11 @@ namespace OnlineShop.API.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public IActionResult GetAll([FromQuery] UserQueryObject query)
+		public async Task<IActionResult> GetAll([FromQuery] UserQueryObject query)
         {
 			var users = _userManager.Users.AsQueryable();
 
+			//Sort users
             if (!string.IsNullOrWhiteSpace(query.SortBy))
             {
                 if (query.SortBy.Equals("username", StringComparison.OrdinalIgnoreCase))
@@ -90,7 +93,24 @@ namespace OnlineShop.API.Controllers
                 }
             }
 
-            return Ok(users);
+			//Paginate users
+            var skipNumber = (query.PageNumber - 1) * query.PageSize;
+			var pagedUsers = users.Skip(skipNumber).Take(query.PageSize);
+
+			//Create paginated response
+            var response = new PagedResponse<IQueryable<AppUser>>(pagedUsers, query.PageNumber, query.PageSize);
+
+			var totalUsers = await _userManager.Users.CountAsync();
+            response.TotalRecords = totalUsers;
+
+            var totalPages = ((double)totalUsers / (double)query.PageSize);
+            int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
+			response.TotalPages = roundedTotalPages;
+
+			response.IsNextPage = response.PageNumber >= 1 && response.PageNumber < roundedTotalPages;
+			response.IsPreviousPage = response.PageNumber - 1 >= 1 && response.PageNumber <= roundedTotalPages;
+
+            return Ok(response);
 		}
 
 		[HttpGet("{id:Guid}")]
