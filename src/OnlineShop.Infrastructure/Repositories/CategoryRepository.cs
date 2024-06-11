@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Categories;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Infrastructure.Data;
 
@@ -37,10 +39,11 @@ namespace OnlineShop.Infrastructure.Repositories
 			return existingCategory;
 		}
 
-		public async Task<List<Category>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<Category>>> GetAllAsync(QueryObject query)
 		{
-			return await _context.Categories.ToListAsync();
-		}
+            //return await _context.Categories.ToListAsync();
+            throw new NotImplementedException();
+        }
 
 		public async Task<Category?> GetByIdAsync(Guid id)
 		{

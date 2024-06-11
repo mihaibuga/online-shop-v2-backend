@@ -1,8 +1,10 @@
 ﻿using OnlineShop.Application.DTOs.InventoryTransactions;
 using OnlineShop.Application.DTOs.Products;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.InventoryTransactions;
 using OnlineShop.Application.Interfaces.Products;
 using OnlineShop.Application.Mappers;
+using OnlineShop.Application.Wrappers;
 
 namespace OnlineShop.Application.Services
 {
@@ -30,12 +32,14 @@ namespace OnlineShop.Application.Services
 			return existingInventoryTransaction != null ? existingInventoryTransaction.ToInventoryTransactionDTO() : null;
 		}
 
-		public async Task<List<InventoryTransactionDto>> GetAllAsync()
+		public async Task<PagedResponse<IQueryable<InventoryTransactionDto>>> GetAllAsync(QueryObject query)
 		{
-			var inventoryTransactions = await _inventoryTransactionRepository.GetAllAsync();
-			var inventoryTransactionsToDTO = inventoryTransactions.Select(it => it.ToInventoryTransactionDTO()).ToList();
-			return inventoryTransactionsToDTO;
-		}
+            //var inventoryTransactions = await _inventoryTransactionRepository.GetAllAsync(query);
+            //var inventoryTransactionsToDTO = inventoryTransactions.Select(it => it.ToInventoryTransactionDTO()).ToList();
+            //return inventoryTransactionsToDTO;
+
+            throw new NotImplementedException();
+        }
 
 		public async Task<InventoryTransactionDto?> GetByIdAsync(Guid id)
 		{

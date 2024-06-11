@@ -1,6 +1,8 @@
 ﻿using OnlineShop.Application.DTOs.Stocks;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Stocks;
 using OnlineShop.Application.Mappers;
+using OnlineShop.Application.Wrappers;
 
 namespace OnlineShop.Application.Services
 {
@@ -28,12 +30,14 @@ namespace OnlineShop.Application.Services
 			return existingStock != null ? existingStock.ToStockDTO() : null;
 		}
 
-		public async Task<List<StockDto>> GetAllAsync()
+		public async Task<PagedResponse<IQueryable<StockDto>>> GetAllAsync(QueryObject query)
 		{
-			var stocks = await _stockRepository.GetAllAsync();
-			var stocksToDTO = stocks.Select(s => s.ToStockDTO()).ToList();
-			return stocksToDTO;
-		}
+            //var stocks = await _stockRepository.GetAllAsync(query);
+            //var stocksToDTO = stocks.Select(s => s.ToStockDTO()).ToList();
+            //return stocksToDTO;
+
+            throw new NotImplementedException();
+        }
 
 		public async Task<StockDto?> GetByIdAsync(Guid id)
 		{

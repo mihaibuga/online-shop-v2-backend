@@ -1,8 +1,8 @@
 ﻿using OnlineShop.Application.DTOs.Brands;
-using OnlineShop.Application.DTOs.Products;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Brands;
-using OnlineShop.Application.Interfaces.Products;
 using OnlineShop.Application.Mappers;
+using OnlineShop.Application.Wrappers;
 
 namespace OnlineShop.Application.Services
 {
@@ -30,12 +30,14 @@ namespace OnlineShop.Application.Services
 			return existingBrand != null ? existingBrand.ToBrandDTO() : null;
 		}
 
-		public async Task<List<BrandDto>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<BrandDto>>> GetAllAsync(QueryObject query)
 		{
-			var brands = await _brandRepository.GetAllAsync();
-			var brandsToDTO = brands.Select(b => b.ToBrandDTO()).ToList();
-			return brandsToDTO;
-		}
+			//var brands = await _brandRepository.GetAllAsync(query);
+			//var brandsToDTO = brands.Select(b => b.ToBrandDTO()).ToList();
+			//return brandsToDTO;
+
+            throw new NotImplementedException();
+        }
 
 		public async Task<BrandDto?> GetByIdAsync(Guid id)
 		{

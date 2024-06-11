@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.InventoryTransactions;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Infrastructure.Data;
 
@@ -37,10 +39,11 @@ namespace OnlineShop.Infrastructure.Repositories
 			return existingInventoryTransaction;
 		}
 
-		public async Task<List<InventoryTransaction>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<InventoryTransaction>>> GetAllAsync(QueryObject query)
 		{
-			return await _context.StockInventoryTransactions.ToListAsync();
-		}
+            //return await _context.StockInventoryTransactions.ToListAsync();
+            throw new NotImplementedException();
+        }
 
 		public async Task<InventoryTransaction?> GetByIdAsync(Guid id)
 		{

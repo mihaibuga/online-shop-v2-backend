@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Application.DTOs.Products;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Products;
 
 namespace OnlineShop.API.Controllers
@@ -30,9 +31,9 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetAll()
+		public async Task<IActionResult> GetAll([FromQuery] ProductQueryObject query)
 		{
-			var products = await _productService.GetAllAsync();
+			var products = await _productService.GetAllAsync(query);
 			return Ok(products);
 		}
 

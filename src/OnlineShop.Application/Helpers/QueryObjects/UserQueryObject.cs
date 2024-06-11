@@ -1,12 +1,7 @@
 ﻿namespace OnlineShop.Application.Helpers.QueryObjects
 {
-    public class UserQueryObject
+    public class UserQueryObject : QueryObject
     {
-        public string? SortBy { get; set; }
-        public bool IsAscending { get; set; }
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
-
         public UserQueryObject()
         {
             SortBy = null;

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Brands;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Infrastructure.Data;
 
@@ -38,10 +40,11 @@ namespace OnlineShop.Infrastructure.Repositories
 			return existingBrand;
 		}
 
-		public async Task<List<Brand>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<Brand>>> GetAllAsync(QueryObject query)
 		{
-			return await _context.Brands.ToListAsync();
-		}
+			//return await _context.Brands.ToListAsync();
+            throw new NotImplementedException();
+        }
 
 		public async Task<Brand?> GetByIdAsync(Guid id)
 		{

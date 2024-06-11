@@ -1,6 +1,8 @@
 ﻿using OnlineShop.Application.DTOs.ProductVariants;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.ProductVariants;
 using OnlineShop.Application.Mappers;
+using OnlineShop.Application.Wrappers;
 
 namespace OnlineShop.Application.Services
 {
@@ -28,12 +30,14 @@ namespace OnlineShop.Application.Services
 			return existingProductVariant != null ? existingProductVariant.ToProductVariantDTO() : null;
 		}
 
-		public async Task<List<ProductVariantDto>> GetAllAsync()
+		public async Task<PagedResponse<IQueryable<ProductVariantDto>>> GetAllAsync(QueryObject query)
 		{
-			var productVariants = await _productVariantRepository.GetAllAsync();
-			var productVariantsToDTO = productVariants.Select(pv => pv.ToProductVariantDTO()).ToList();
-			return productVariantsToDTO;
-		}
+			//var productVariants = await _productVariantRepository.GetAllAsync(query);
+			//var productVariantsToDTO = productVariants.Select(pv => pv.ToProductVariantDTO()).ToList();
+			//return productVariantsToDTO;
+
+            throw new NotImplementedException();
+        }
 
 		public async Task<ProductVariantDto?> GetByIdAsync(Guid id)
 		{

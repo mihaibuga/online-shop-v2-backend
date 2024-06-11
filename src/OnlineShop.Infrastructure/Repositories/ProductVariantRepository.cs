@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.ProductVariants;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Infrastructure.Data;
 
@@ -37,10 +39,11 @@ namespace OnlineShop.Infrastructure.Repositories
 			return existingProductVariant;
 		}
 
-		public async Task<List<ProductVariant>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<ProductVariant>>> GetAllAsync(QueryObject query)
 		{
-			return await _context.ProductVariants.ToListAsync();
-		}
+            //return await _context.ProductVariants.ToListAsync();
+            throw new NotImplementedException();
+        }
 
 		public async Task<ProductVariant?> GetByIdAsync(Guid id)
 		{

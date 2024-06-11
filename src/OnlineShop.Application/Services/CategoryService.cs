@@ -1,6 +1,8 @@
 ﻿using OnlineShop.Application.DTOs.Categories;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Categories;
 using OnlineShop.Application.Mappers;
+using OnlineShop.Application.Wrappers;
 
 namespace OnlineShop.Application.Services
 {
@@ -28,12 +30,14 @@ namespace OnlineShop.Application.Services
 			return existingCategory != null ? existingCategory.ToCategoryDTO() : null;
 		}
 
-		public async Task<List<CategoryDto>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<CategoryDto>>> GetAllAsync(QueryObject query)
 		{
-			var categories = await _categoryRepository.GetAllAsync();
-			var categoriesToDTO = categories.Select(p => p.ToCategoryDTO()).ToList();
-			return categoriesToDTO;
-		}
+            //var categories = await _categoryRepository.GetAllAsync(query);
+            //var categoriesToDTO = categories.Select(p => p.ToCategoryDTO()).ToList();
+            //return categoriesToDTO;
+
+            throw new NotImplementedException();
+        }
 
 		public async Task<CategoryDto?> GetByIdAsync(Guid id)
 		{

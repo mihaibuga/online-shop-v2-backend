@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Stocks;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Infrastructure.Data;
 
@@ -37,10 +39,11 @@ namespace OnlineShop.Infrastructure.Repositories
 			return existingStock;
 		}
 
-		public async Task<List<Stock>> GetAllAsync()
+		public Task<PagedResponse<IQueryable<Stock>>> GetAllAsync(QueryObject query)
 		{
-			return await _context.Stocks.ToListAsync();
-		}
+            //return await _context.Stocks.ToListAsync();
+            throw new NotImplementedException();
+        }
 
 		public async Task<Stock?> GetByIdAsync(Guid id)
 		{
