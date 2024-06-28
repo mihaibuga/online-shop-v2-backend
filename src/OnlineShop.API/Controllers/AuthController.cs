@@ -92,6 +92,79 @@ namespace OnlineShop.API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDto registerDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                //Check if email is already used
+                AppUser existingUserByEmail = await _userManager.FindByEmailAsync(registerDto.Email);
+
+                if (existingUserByEmail != null)
+                {
+                    return BadRequest(new { message = "This email is already associated with an existing account." });
+                }
+
+                //Check if username is already used
+                AppUser? existingUserByUserName = await _userManager.FindByNameAsync(registerDto.Username);
+
+                if (existingUserByUserName != null)
+                {
+                    return BadRequest(new { message = "This username is already used." });
+                }
+
+                AppUser appUser = new AppUser
+                {
+                    UserName = registerDto.Username,
+                    Email = registerDto.Email
+                };
+
+                if (registerDto.Password != null)
+                {
+                    IdentityResult createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
+
+                    if (createdUser.Succeeded)
+                    {
+                        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                            await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+                        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                        {
+                            IdentityResult roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.Admin);
+
+                            if (roleResult.Succeeded)
+                            {
+                                return Ok(
+                                    new NewUserDto
+                                    {
+                                        UserName = appUser.UserName,
+                                        Email = appUser.Email,
+                                        Token = await _tokenService.CreateToken(appUser)
+                                    }
+                                );
+                            }
+
+                            return StatusCode(500, roleResult.Errors);
+                        }
+                    }
+
+                    return StatusCode(500, createdUser.Errors);
+                }
+
+                return StatusCode(500, "An internal problem has occured! Please try again later!");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDTO)
         {
