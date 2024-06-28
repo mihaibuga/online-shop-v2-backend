@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using OnlineShop.Application.DTOs.AppFiles;
 using OnlineShop.Application.Helpers;
 using OnlineShop.Application.Interfaces.Files;
 
@@ -20,15 +20,15 @@ namespace OnlineShop.Application.Services
             }
         }
 
-        public async Task<string> SaveFileAsync(IFormFile file)
+        public async Task<string> SaveFileAsync(FileAsset fileAsset)
         {
             try
             {
-                var getValidFileName = new FileUploadHandler().Upload(file);
+                var getValidFileName = new FileUploadHandler().Upload(fileAsset.File);
                 var filePath = Path.Combine(_storagePath, getValidFileName);
 
                 using FileStream stream = new FileStream(filePath, FileMode.Create);
-                await file.CopyToAsync(stream);
+                await fileAsset.File.CopyToAsync(stream);
 
                 return getValidFileName;
             }

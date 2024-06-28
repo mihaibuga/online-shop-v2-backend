@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using OnlineShop.Application.DTOs.AppFiles;
-using OnlineShop.Application.Interfaces.BaseEntities;
+﻿using OnlineShop.Application.DTOs.AppFiles;
 
 namespace OnlineShop.Application.Interfaces.Files
 {
     public interface IAppFileService
     {
-        Task<string> SaveFileAsync(IFormFile file);
+        Task<string> SaveFileAsync(FileAsset file);
     }
 }

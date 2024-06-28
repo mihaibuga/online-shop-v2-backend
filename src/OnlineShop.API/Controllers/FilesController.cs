@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using OnlineShop.Application.DTOs.Products;
+﻿using Microsoft.AspNetCore.Mvc;
+using OnlineShop.Application.DTOs.AppFiles;
 using OnlineShop.Application.Interfaces.Files;
-using OnlineShop.Application.Interfaces.Products;
-using OnlineShop.Application.Services;
 
 namespace OnlineShop.API.Controllers
 {
@@ -20,9 +17,9 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile([FromForm] FileAsset fileAsset)
         {
-            var savedFile = await _appFileService.SaveFileAsync(file);
+            var savedFile = await _appFileService.SaveFileAsync(fileAsset);
 
             return Ok(savedFile);
         }
