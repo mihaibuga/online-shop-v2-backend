@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Application.DTOs.AppFiles;
 using OnlineShop.Application.Interfaces.Files;
 
@@ -17,6 +18,7 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> UploadFile([FromForm] FileAsset fileAsset)
         {
             var savedFile = await _appFileService.SaveFileAsync(fileAsset);
