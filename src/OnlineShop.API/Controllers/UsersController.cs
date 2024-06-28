@@ -26,8 +26,8 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpPost]
-		[Authorize]
-		public async Task<IActionResult> Create([FromBody] CreateUserRequestDto userDto)
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> Create([FromBody] CreateUserRequestDto userDto)
 		{
 			try
 			{
@@ -73,8 +73,8 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpGet]
-		[Authorize]
-		public async Task<IActionResult> GetAll([FromQuery] UserQueryObject query)
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> GetAll([FromQuery] UserQueryObject query)
         {
 			var users = _userManager.Users.AsQueryable();
 
@@ -114,8 +114,8 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpGet("{id:Guid}")]
-		[Authorize]
-		public async Task<IActionResult> GetById([FromRoute] string id)
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> GetById([FromRoute] string id)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -145,8 +145,8 @@ namespace OnlineShop.API.Controllers
 
 		[HttpDelete]
 		[Route("{id:Guid}")]
-		[Authorize]
-		public async Task<IActionResult> Delete([FromRoute] string id)
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> Delete([FromRoute] string id)
 		{
 			try
 			{

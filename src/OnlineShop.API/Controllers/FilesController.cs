@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Application.DTOs.AppFiles;
 using OnlineShop.Application.Interfaces.Files;
+using OnlineShop.Domain.Entities.Users;
 
 namespace OnlineShop.API.Controllers
 {
@@ -18,7 +19,7 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> UploadFile([FromForm] FileAsset fileAsset)
         {
             var savedFile = await _appFileService.SaveFileAsync(fileAsset);

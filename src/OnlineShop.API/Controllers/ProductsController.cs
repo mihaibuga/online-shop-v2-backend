@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Application.DTOs.Products;
 using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Products;
+using OnlineShop.Domain.Entities.Users;
 
 namespace OnlineShop.API.Controllers
 {
@@ -17,8 +18,8 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpPost]
-		[Authorize]
-		public async Task<IActionResult> Create([FromBody] CreateProductRequestDto productDTO)
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> Create([FromBody] CreateProductRequestDto productDTO)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -58,8 +59,8 @@ namespace OnlineShop.API.Controllers
 
 		[HttpDelete]
 		[Route("{id:Guid}")]
-		[Authorize]
-		public async Task<IActionResult> Delete([FromRoute] Guid id)
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
 			{
