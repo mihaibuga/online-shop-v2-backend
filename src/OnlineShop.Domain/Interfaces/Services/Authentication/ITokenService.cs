@@ -4,6 +4,6 @@ namespace OnlineShop.Domain.Interfaces.Services.Authentication
 {
 	public interface ITokenService
 	{
-		string CreateToken(AppUser user);
+		Task<string> CreateToken(AppUser user);
 	}
 }

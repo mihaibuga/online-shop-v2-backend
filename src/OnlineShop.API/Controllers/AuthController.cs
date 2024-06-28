@@ -11,16 +11,19 @@ namespace OnlineShop.API.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signinManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITokenService _tokenService;
 
         public AuthController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ITokenService tokenService
         )
         {
             _userManager = userManager;
             _signinManager = signInManager;
+            _roleManager = roleManager;
             _tokenService = tokenService;
         }
 
@@ -33,7 +36,7 @@ namespace OnlineShop.API.Controllers
                     return BadRequest(ModelState);
 
                 //Check if email is already used
-                AppUser? existingUserByEmail = await _userManager.FindByEmailAsync(registerDto.Email);
+                AppUser existingUserByEmail = await _userManager.FindByEmailAsync(registerDto.Email);
 
                 if (existingUserByEmail != null)
                 {
@@ -42,12 +45,13 @@ namespace OnlineShop.API.Controllers
 
                 //Check if username is already used
                 AppUser? existingUserByUserName = await _userManager.FindByNameAsync(registerDto.Username);
+
                 if (existingUserByUserName != null)
                 {
                     return BadRequest(new { message = "This username is already used." });
                 }
 
-                AppUser? appUser = new AppUser
+                AppUser appUser = new AppUser
                 {
                     UserName = registerDto.Username,
                     Email = registerDto.Email
@@ -55,12 +59,12 @@ namespace OnlineShop.API.Controllers
 
                 if (registerDto.Password != null)
                 {
-                    IdentityResult? createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
+                    IdentityResult createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
 
                     if (createdUser.Succeeded)
                     {
                         //Associate user to role
-                        IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+                        IdentityResult roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.User);
 
                         if (roleResult.Succeeded)
                         {
@@ -69,7 +73,7 @@ namespace OnlineShop.API.Controllers
                                 {
                                     UserName = appUser.UserName,
                                     Email = appUser.Email,
-                                    Token = _tokenService.CreateToken(appUser)
+                                    Token = await _tokenService.CreateToken(appUser)
                                 }
                             );
                         }
@@ -113,11 +117,11 @@ namespace OnlineShop.API.Controllers
                         if (result.Succeeded)
                         {
                             return Ok(
-                                new NewUserDto
+                                new
                                 {
                                     UserName = existingUser.UserName != null ? existingUser.UserName : string.Empty,
                                     Email = existingUser.Email != null ? existingUser.Email : string.Empty,
-                                    Token = _tokenService.CreateToken(existingUser)
+                                    Token = await _tokenService.CreateToken(existingUser)
                                 }
                             );
                         }
@@ -151,7 +155,7 @@ namespace OnlineShop.API.Controllers
                             {
                                 UserName = existingUserByGmail.UserName != null ? existingUserByGmail.UserName : string.Empty,
                                 Email = existingUserByGmail.Email != null ? existingUserByGmail.Email : string.Empty,
-                                Token = _tokenService.CreateToken(existingUserByGmail)
+                                Token = await _tokenService.CreateToken(existingUserByGmail)
                             }
                         );
                 }
@@ -166,7 +170,7 @@ namespace OnlineShop.API.Controllers
                             {
                                 UserName = existingUserByUserName.UserName != null ? existingUserByUserName.UserName : string.Empty,
                                 Email = existingUserByUserName.Email != null ? existingUserByUserName.Email : string.Empty,
-                                Token = _tokenService.CreateToken(existingUserByUserName)
+                                Token = await _tokenService.CreateToken(existingUserByUserName)
                             }
                         );
                     }
@@ -182,7 +186,7 @@ namespace OnlineShop.API.Controllers
                     if (createdUser.Succeeded)
                     {
                         //Associate user to role
-                        IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+                        IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.User);
 
                         if (roleResult.Succeeded)
                         {
@@ -191,7 +195,7 @@ namespace OnlineShop.API.Controllers
                                 {
                                     UserName = appUser.UserName,
                                     Email = appUser.Email,
-                                    Token = _tokenService.CreateToken(appUser)
+                                    Token = await _tokenService.CreateToken(appUser)
                                 }
                             );
                         }

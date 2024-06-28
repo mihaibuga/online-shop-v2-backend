@@ -9,6 +9,7 @@ using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Domain.Interfaces.Services.Authentication;
+using System.Security.Claims;
 
 
 namespace OnlineShop.API.Controllers
@@ -51,7 +52,7 @@ namespace OnlineShop.API.Controllers
 								{
 									UserName = appUser.UserName != null ? appUser.UserName : string.Empty,
 									Email = appUser.Email != null ? appUser.Email : string.Empty,
-									Token = _tokenService.CreateToken(appUser)
+									Token = await _tokenService.CreateToken(appUser)
 								}
 							);
 					}
@@ -131,6 +132,17 @@ namespace OnlineShop.API.Controllers
 
 			return Ok(existingUser);
 		}
+
+		[HttpGet]
+		[Route("current")]
+		public async Task<IActionResult> GetLoggedInUserId()
+		{
+			//var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            return Ok(new { userId = claims.Value });
+        }
 
 		[HttpDelete]
 		[Route("{id:Guid}")]

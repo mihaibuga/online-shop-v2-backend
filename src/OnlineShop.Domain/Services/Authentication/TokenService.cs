@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
@@ -14,24 +15,33 @@ namespace OnlineShop.Domain.Services.Authentication
 	{
 		private readonly IConfiguration _config;
 		private readonly SymmetricSecurityKey _key;
+        private readonly UserManager<AppUser> _userManager;
 
-		public TokenService(IConfiguration config)
+        public TokenService(IConfiguration config, UserManager<AppUser> userManager)
 		{
 			_config = config;
 			_key = new SymmetricSecurityKey(
 					Encoding.UTF8.GetBytes(_config["JWT:SigningKey"])
 					);
+			_userManager = userManager;
 		}
 
-		public string CreateToken(AppUser user)
+		public async Task<string> CreateToken(AppUser user)
 		{
-			var claims = new List<Claim>
+            var claims = new List<Claim>
 			{
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
 				new Claim(JwtRegisteredClaimNames.GivenName, user.UserName)
 			};
 
-			var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+			var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
