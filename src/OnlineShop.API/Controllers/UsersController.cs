@@ -184,6 +184,16 @@ namespace OnlineShop.API.Controllers
             return Ok(existingUser);
         }
 
+        [HttpGet]
+        [Route("current")]
+        [Authorize]
+        public IActionResult GetLoggedInUserId()
+        {
+            var userId = ((ClaimsIdentity)User.Identity).FindFirst("UserId").Value;
+
+            return Ok(userId);
+        }
+
         [HttpDelete]
         [Route("{id:Guid}")]
         [Authorize]

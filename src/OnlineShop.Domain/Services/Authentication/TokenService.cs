@@ -31,7 +31,8 @@ namespace OnlineShop.Domain.Services.Authentication
             var claims = new List<Claim>
 			{
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
-				new Claim(JwtRegisteredClaimNames.GivenName, user.UserName)
+				new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+				new Claim("UserId", user.Id)
 			};
 
 			var userRoles = await _userManager.GetRolesAsync(user);
