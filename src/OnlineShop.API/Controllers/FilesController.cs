@@ -19,7 +19,7 @@ namespace OnlineShop.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize]
         public async Task<IActionResult> UploadFile([FromForm] FileAsset fileAsset)
         {
             var savedFile = await _appFileService.SaveFileAsync(fileAsset);

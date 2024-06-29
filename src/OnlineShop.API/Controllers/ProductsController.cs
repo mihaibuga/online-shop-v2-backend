@@ -18,7 +18,7 @@ namespace OnlineShop.API.Controllers
 		}
 
 		[HttpPost]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateProductRequestDto productDTO)
 		{
 			if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace OnlineShop.API.Controllers
 
 		[HttpDelete]
 		[Route("{id:Guid}")]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
