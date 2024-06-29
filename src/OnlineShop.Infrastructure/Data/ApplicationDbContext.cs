@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineShop.Domain.Entities;
 using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Domain.Entities.ProductAttributes;
-using System.Reflection.Emit;
 
 namespace OnlineShop.Infrastructure.Data
 {
-	public class ApplicationDbContext : IdentityDbContext<AppUser>
+	public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, string>
 	{
 		public ApplicationDbContext(
 			DbContextOptions<ApplicationDbContext> options)
@@ -21,17 +20,36 @@ namespace OnlineShop.Infrastructure.Data
 		public DbSet<ProductVariant> ProductVariants { get; set; }
 		public DbSet<Stock> Stocks { get; set; }
 		public DbSet<InventoryTransaction> StockInventoryTransactions { get; set; }
+        public DbSet<AppRole> UserRoles { get; set; }
+        public DbSet<AppFile> AppFiles { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			base.OnModelCreating(builder);
 
-			ConfigureDefaultDates(builder.Entity<Product>());
+            List<AppRole> roles = new List<AppRole>
+            {
+                new AppRole
+                {
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new AppRole
+                {
+                    Name = "User",
+                    NormalizedName = "USER"
+                },
+            };
+
+            builder.Entity<AppRole>().HasData(roles);
+
+            ConfigureDefaultDates(builder.Entity<Product>());
 			ConfigureDefaultDates(builder.Entity<Brand>());
 			ConfigureDefaultDates(builder.Entity<Category>());
 			ConfigureDefaultDates(builder.Entity<ProductVariant>());
 			ConfigureDefaultDates(builder.Entity<Stock>());
 			ConfigureDefaultDates(builder.Entity<InventoryTransaction>());
+			ConfigureDefaultDates(builder.Entity<AppFile>());
 
 			builder.Entity<Product>()
 				.HasOne(p => p.Category)

@@ -11,13 +11,13 @@ namespace OnlineShop.API.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signinManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<AppRole> _roleManager;
         private readonly ITokenService _tokenService;
 
         public AuthController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
+            RoleManager<AppRole> roleManager,
             ITokenService tokenService
         )
         {
@@ -63,22 +63,30 @@ namespace OnlineShop.API.Controllers
 
                     if (createdUser.Succeeded)
                     {
-                        //Associate user to role
-                        IdentityResult roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.User);
-
-                        if (roleResult.Succeeded)
+                        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
                         {
-                            return Ok(
-                                new NewUserDto
-                                {
-                                    UserName = appUser.UserName,
-                                    Email = appUser.Email,
-                                    Token = await _tokenService.CreateToken(appUser)
-                                }
-                            );
+                            await _roleManager.CreateAsync(new AppRole { Name = UserRoles.User });
                         }
 
-                        return StatusCode(500, roleResult.Errors);
+                        if (await _roleManager.RoleExistsAsync(UserRoles.User))
+                        {
+                            //Associate user to role
+                            IdentityResult roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.User);
+
+                            if (roleResult.Succeeded)
+                            {
+                                return Ok(
+                                    new NewUserDto
+                                    {
+                                        UserName = appUser.UserName,
+                                        Email = appUser.Email,
+                                        Token = await _tokenService.CreateToken(appUser)
+                                    }
+                                );
+                            }
+
+                            return StatusCode(500, roleResult.Errors);
+                        }
                     }
 
                     return StatusCode(500, createdUser.Errors);
@@ -130,9 +138,9 @@ namespace OnlineShop.API.Controllers
                     if (createdUser.Succeeded)
                     {
                         if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                            await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-                        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                        {
+                            await _roleManager.CreateAsync(new AppRole { Name = UserRoles.Admin });
+                        }
 
                         if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
                         {

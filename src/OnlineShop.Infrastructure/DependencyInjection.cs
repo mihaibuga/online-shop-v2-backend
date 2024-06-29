@@ -20,7 +20,6 @@ using OnlineShop.Application.Interfaces.Stocks;
 using OnlineShop.Application.Services;
 
 using OnlineShop.Infrastructure.Data;
-using OnlineShop.Infrastructure.Identity;
 using OnlineShop.Infrastructure.Repositories;
 using OnlineShop.Application.Interfaces.Files;
 using OnlineShop.Application.Helpers;
@@ -81,13 +80,8 @@ namespace OnlineShop.Infrastructure
             {
                 options.UseSqlServer(connectionString);
             });
-            services.AddDbContext<IdentityDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
 
-
-            services.AddIdentity<AppUser, IdentityRole>(options =>
+            services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
@@ -139,6 +133,7 @@ namespace OnlineShop.Infrastructure
             services.AddScoped<IStockRepository, StockRepository>();
             services.AddScoped<IStockService, StockService>();
 
+            services.AddScoped<IAppFileRepository, AppFileRepository>();
             services.AddScoped<IAppFileService, AppFileService>();
 
             services.AddScoped<ITokenService, TokenService>();
