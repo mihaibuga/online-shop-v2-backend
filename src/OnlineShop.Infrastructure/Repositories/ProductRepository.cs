@@ -49,10 +49,10 @@ namespace OnlineShop.Infrastructure.Repositories
             //Create paginated response
             var response = new PagedResponse<IQueryable<Product>>(pagedUsers, query.PageNumber, query.PageSize);
 
-            var totalUsers = await _context.Products.CountAsync();
-            response.TotalRecords = totalUsers;
+            var totalProducts = await _context.Products.CountAsync();
+            response.TotalRecords = totalProducts;
 
-            var totalPages = ((double)totalUsers / (double)query.PageSize);
+            var totalPages = ((double)totalProducts / (double)query.PageSize);
             int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
             response.TotalPages = roundedTotalPages;
 
