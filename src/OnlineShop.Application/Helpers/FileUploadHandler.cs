@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using OnlineShop.Application.DTOs.AppFiles;
+using OnlineShop.Domain.Entities.Users;
 
 namespace OnlineShop.Application.Helpers
 {
     public class FileUploadHandler
     {
-        public string Upload(IFormFile file)
+        public string Upload(FileAsset fileAsset)
         {
             //extension
             List<string> validExtensions = new List<string>() { ".jpg", ".png", ".gif", ".pdf" };
 
-            string extension = Path.GetExtension(file.FileName);
+            string extension = Path.GetExtension(fileAsset.File.FileName);
 
             if (!validExtensions.Contains(extension))
             {
@@ -17,7 +20,7 @@ namespace OnlineShop.Application.Helpers
             }
 
             //file size
-            long size = file.Length;
+            long size = fileAsset.File.Length;
             int fileSizeMaxLimitMb = 5;
             var fileSizeLimitKb = fileSizeMaxLimitMb * 1024;
             var fileSizeLimitBytes = fileSizeLimitKb * 1024;
@@ -29,6 +32,10 @@ namespace OnlineShop.Application.Helpers
 
             //name changing
             string fileName = Guid.NewGuid().ToString() + extension;
+            if (!String.IsNullOrEmpty(fileAsset.FileName))
+            {
+                fileName = fileAsset.FileName + extension;
+            }
 
             return fileName;
         }

@@ -24,8 +24,8 @@ namespace OnlineShop.Application.Services
         {
             try
             {
-                var getValidFileName = new FileUploadHandler().Upload(fileAsset.File);
-                var filePath = Path.Combine(_storagePath, getValidFileName);
+                string? getValidFileName = new FileUploadHandler().Upload(fileAsset);
+                string? filePath = Path.Combine(_storagePath, getValidFileName);
 
                 using FileStream stream = new FileStream(filePath, FileMode.Create);
                 await fileAsset.File.CopyToAsync(stream);
