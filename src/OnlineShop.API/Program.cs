@@ -28,10 +28,13 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(x => x
+    .WithOrigins("http://localhost:5296", "https://localhost:7065/")
+    //.SetIsOriginAllowedToAllowWildcardSubdomains()
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
-    //.WithOrigins("https://localhost:44371)
+    //.WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS"));
+    //.SetPreflightMaxAge(TimeSpan.FromSeconds(3600)));
     .SetIsOriginAllowed(origin => true));
 
 app.UseAuthentication();
