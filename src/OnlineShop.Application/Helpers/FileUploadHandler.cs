@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using OnlineShop.Application.DTOs.AppFiles;
-using OnlineShop.Domain.Entities.Users;
+﻿using OnlineShop.Application.DTOs.AppFiles;
+using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.Helpers
 {
     public class FileUploadHandler
     {
-        public string Upload(FileAsset fileAsset)
+        public object Upload(FileAsset fileAsset)
         {
             //extension
             List<string> validExtensions = new List<string>() { ".jpg", ".png", ".gif", ".pdf" };
@@ -31,13 +29,20 @@ namespace OnlineShop.Application.Helpers
             }
 
             //name changing
-            string fileName = Guid.NewGuid().ToString() + extension;
+            string fileName = Guid.NewGuid().ToString();
             if (!String.IsNullOrEmpty(fileAsset.FileName))
             {
-                fileName = fileAsset.FileName + extension;
+                fileName = fileAsset.FileName;
             }
 
-            return fileName;
+            AppFile newAppFile = new AppFile
+            {
+                RawFileName = fileName,
+                FileExtension = extension,
+                CompleteFileName = fileName + extension
+            };
+
+            return newAppFile;
         }
     }
 }

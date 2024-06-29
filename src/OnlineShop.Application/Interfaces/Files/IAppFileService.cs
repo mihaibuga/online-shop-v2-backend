@@ -4,6 +4,6 @@ namespace OnlineShop.Application.Interfaces.Files
 {
     public interface IAppFileService
     {
-        Task<string> SaveFileAsync(FileAsset file);
+        Task<object> SaveFileAsync(FileAsset file);
     }
 }
