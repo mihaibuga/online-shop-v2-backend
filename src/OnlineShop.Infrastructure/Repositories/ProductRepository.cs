@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Products;
 using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
-using OnlineShop.Domain.Entities.Users;
 using OnlineShop.Infrastructure.Data;
 
 namespace OnlineShop.Infrastructure.Repositories
@@ -27,7 +25,10 @@ namespace OnlineShop.Infrastructure.Repositories
 
         public async Task<PagedResponse<IQueryable<Product>>> GetAllAsync(QueryObject query)
         {
-            var products = _context.Products.AsQueryable();
+            var products = _context.Products
+                .Include(p => p.ProductImages)
+                .ThenInclude(pi => pi.Image)
+                .AsQueryable();
 
             //Sort products
             if (!string.IsNullOrWhiteSpace(query.SortBy))
@@ -65,12 +66,48 @@ namespace OnlineShop.Infrastructure.Repositories
         public async Task<Product?> GetByIdAsync(Guid id)
         {
             return await _context.Products
-                    .FirstOrDefaultAsync(product => product.Id == id);
+                .Include(p => p.ProductImages)
+                .ThenInclude(pi => pi.Image)
+                .FirstOrDefaultAsync(product => product.Id == id);
         }
 
         public async Task<Product> UpdateAsync(Product product)
         {
-            throw new NotImplementedException();
+            var existingProduct = await _context.Products
+                .Include(p => p.ProductImages)
+                .ThenInclude(pi => pi.Image)
+                .FirstOrDefaultAsync(p => p.Id == product.Id);
+
+            if (existingProduct != null)
+            {
+                _context.Entry(existingProduct).CurrentValues.SetValues(product);
+
+                foreach (var image in product.ProductImages)
+                {
+                    var existingImage = existingProduct.ProductImages.FirstOrDefault(pi => pi.Id == image.Id);
+
+                    if (existingImage == null)
+                    {
+                        existingProduct.ProductImages.Add(image);
+                    }
+                    else
+                    {
+                        _context.Entry(existingImage).CurrentValues.SetValues(image);
+                    }
+                }
+
+                foreach (var existingImage in existingProduct.ProductImages.ToList())
+                {
+                    if (!product.ProductImages.Any(pi => pi.Id == existingImage.Id))
+                    {
+                        _context.ProductImages.Remove(existingImage);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return existingProduct;
         }
 
         public async Task<Product?> DeleteAsync(Guid id)

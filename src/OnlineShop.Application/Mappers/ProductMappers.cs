@@ -17,6 +17,7 @@ namespace OnlineShop.Application.Mappers
 				Description = productModel.Description,
 				PreviousPrice = productModel.PreviousPrice,
 				Price = productModel.Price,
+				ProductImages = productModel.ProductImages,
 			};
 		}
 
@@ -24,12 +25,8 @@ namespace OnlineShop.Application.Mappers
 		{
 			return new Product
 			{
-				CreatedDate = productDTO.CreatedDate,
-				ModifiedDate = productDTO.ModifiedDate,
-				IsEnabled = productDTO.IsEnabled,
 				Name = productDTO.Name,
 				Description = productDTO.Description,
-				PreviousPrice = productDTO.PreviousPrice,
 				Price = productDTO.Price
 			};
 		}

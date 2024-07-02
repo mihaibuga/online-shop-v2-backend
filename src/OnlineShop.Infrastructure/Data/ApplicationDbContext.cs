@@ -18,6 +18,7 @@ namespace OnlineShop.Infrastructure.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductAttribute> ProductAttributes { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<InventoryTransaction> StockInventoryTransactions { get; set; }
         public DbSet<AppRole> UserRoles { get; set; }
@@ -31,6 +32,7 @@ namespace OnlineShop.Infrastructure.Data
             ConfigureDefaultDates(builder.Entity<Brand>());
             ConfigureDefaultDates(builder.Entity<Category>());
             ConfigureDefaultDates(builder.Entity<ProductVariant>());
+            ConfigureDefaultDates(builder.Entity<ProductImage>());
             ConfigureDefaultDates(builder.Entity<Stock>());
             ConfigureDefaultDates(builder.Entity<InventoryTransaction>());
             ConfigureDefaultDates(builder.Entity<AppFile>());
@@ -44,6 +46,17 @@ namespace OnlineShop.Infrastructure.Data
                 .HasOne(p => p.Brand)
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.BrandId);
+
+            builder.Entity<Product>()
+                .HasMany(p => p.ProductImages)
+                .WithOne(pi => pi.Product)
+                .HasForeignKey(p => p.ProductId);
+
+            builder.Entity<ProductImage>()
+                .HasOne(pi => pi.Image)
+                .WithOne()
+                .HasForeignKey<ProductImage>(pi => pi.AppFileId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProductVariant>()
                 .HasOne(pv => pv.Product)
@@ -67,7 +80,7 @@ namespace OnlineShop.Infrastructure.Data
 
             builder.Entity<InventoryTransaction>()
                 .Property(it => it.Type)
-            .HasConversion<string>();
+                .HasConversion<string>();
 
             builder.Entity<ProductAttribute>()
                 .HasDiscriminator<string>("ProductAttributeType")

@@ -20,5 +20,6 @@ namespace OnlineShop.Domain.Entities
 		public Category? Category { get; set; }
 		public Brand? Brand { get; set; }
 		public ICollection<ProductVariant>? Variants { get; set; }
-	}
+        public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    }
 }

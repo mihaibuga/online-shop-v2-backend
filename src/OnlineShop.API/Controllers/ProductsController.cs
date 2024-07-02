@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Application.DTOs.Products;
 using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Products;
-using OnlineShop.Domain.Entities.Users;
 
 namespace OnlineShop.API.Controllers
 {
@@ -19,7 +18,7 @@ namespace OnlineShop.API.Controllers
 
 		[HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create([FromBody] CreateProductRequestDto productDTO)
+        public async Task<IActionResult> Create([FromForm] CreateProductRequestDto productDTO)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -28,7 +27,7 @@ namespace OnlineShop.API.Controllers
 
 			var productModelDTO = await _productService.CreateAsync(productDTO);
 
-			return CreatedAtAction(nameof(GetById), new { id = productModelDTO.Id }, productModelDTO);
+            return CreatedAtAction(nameof(GetById), new { id = productModelDTO.Id }, productModelDTO);
 		}
 
 		[HttpGet]

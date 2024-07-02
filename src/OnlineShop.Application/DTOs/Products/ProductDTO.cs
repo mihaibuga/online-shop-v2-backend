@@ -1,4 +1,5 @@
 ﻿using OnlineShop.Application.DTOs.BaseEntities;
+using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.DTOs.Products
 {
@@ -12,5 +13,6 @@ namespace OnlineShop.Application.DTOs.Products
 		public string? Description { get; set; }
 		public decimal? PreviousPrice { get; set; }
 		public decimal Price { get; set; }
-	}
+        public ICollection<ProductImage> ProductImages { get; set; }
+    }
 }

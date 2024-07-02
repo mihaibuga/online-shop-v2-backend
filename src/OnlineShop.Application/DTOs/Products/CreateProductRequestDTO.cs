@@ -1,20 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using OnlineShop.Application.DTOs.BaseEntities;
+using Microsoft.AspNetCore.Http;
 
 namespace OnlineShop.Application.DTOs.Products
 {
-    public class CreateProductRequestDto : ICreateBaseEntityRequestDto
+    public class CreateProductRequestDto
 	{
-		public DateTime CreatedDate { get; set; } = DateTime.Now;
-		public DateTime? ModifiedDate { get; set; } = DateTime.Now;
-		public bool IsEnabled { get; set; } = true;
 		[Required]
 		public string Name { get; set; } = string.Empty;
 		public string? Description { get; set; }
 
-		public decimal? PreviousPrice { get; set; }
-
 		[Required]
 		public decimal Price { get; set; }
-	}
+		public IEnumerable<IFormFile>? ProductImages { get; set; }
+    }
 }

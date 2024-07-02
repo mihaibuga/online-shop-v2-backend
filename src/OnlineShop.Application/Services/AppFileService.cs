@@ -40,13 +40,38 @@ namespace OnlineShop.Application.Services
                     await fileAsset.File.CopyToAsync(stream);
 
                     await _appFileRepository.CreateAsync((AppFile)getFileValidationResult);
+
+                    return getFileValidationResult;
                 }
 
-                return getFileValidationResult;
+                return "There has been a problem saving the file";
             }
             catch (Exception e)
             {
-                //return "There has been a problem saving the file";
+                return e;
+            }
+        }
+
+        public async Task<object> SaveFilesAsync(IList<FileAsset> fileAssets)
+        {
+            try
+            {
+                List<AppFile> appFiles = new List<AppFile>();
+
+                foreach (var fileAsset in fileAssets)
+                {
+                    var newAppFile = await SaveFileAsync(fileAsset);
+
+                    if (newAppFile != null && newAppFile is AppFile)
+                    {
+                        appFiles.Add((AppFile)newAppFile);
+                    }
+                }
+
+                return appFiles;
+            }
+            catch (Exception e)
+            {
                 return e;
             }
         }

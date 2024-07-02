@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Application.DTOs.AppFiles;
 using OnlineShop.Application.DTOs.Products;
 using OnlineShop.Application.Helpers.QueryObjects;
+using OnlineShop.Application.Interfaces.Files;
 using OnlineShop.Application.Interfaces.Products;
 using OnlineShop.Application.Mappers;
 using OnlineShop.Application.Wrappers;
@@ -12,19 +15,52 @@ namespace OnlineShop.Application.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly IAppFileService _appFileService;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, IAppFileService appFileService)
         {
             _productRepository = productRepository;
+            _appFileService = appFileService;
         }
 
         public async Task<ProductDto> CreateAsync(CreateProductRequestDto productDTO)
         {
             var productModel = productDTO.ToProductFromCreateDTO();
 
-            await _productRepository.CreateAsync(productModel);
+            var newProduct = await _productRepository.CreateAsync(productModel);
+
+            await AddProductImagesAsync(productDTO.ProductImages, newProduct.Id);
 
             return productModel.ToProductDTO();
+        }
+
+        public async Task<List<ProductImage>> AddProductImagesAsync(IEnumerable<IFormFile> productImageFormFiles, Guid productId)
+        {
+            if (productImageFormFiles != null)
+            {
+                var existingProduct = await _productRepository.GetByIdAsync(productId);
+
+                if (existingProduct != null)
+                {
+                    List<FileAsset> mappedFileAssets = productImageFormFiles.ToFileAssetList();
+
+                    if (mappedFileAssets.Count != 0)
+                    {
+                        var savedAppFiles = await _appFileService.SaveFilesAsync(mappedFileAssets);
+
+                        if (savedAppFiles != null && savedAppFiles is List<AppFile>)
+                        {
+                            List<ProductImage> productImages = ((List<AppFile>)savedAppFiles).ToProductImagesList(productId);
+
+                            existingProduct.ProductImages = productImages;
+
+                            await _productRepository.UpdateAsync(existingProduct);
+                        }
+                    }
+                }
+            }
+
+            return new List<ProductImage>();
         }
 
         public async Task<PagedResponse<IQueryable<ProductDto>>> GetAllAsync(QueryObject query)
