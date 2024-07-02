@@ -68,7 +68,7 @@ namespace OnlineShop.Infrastructure.Repositories
                     .FirstOrDefaultAsync(product => product.Id == id);
         }
 
-        public Task<Product> UpdateAsync()
+        public async Task<Product> UpdateAsync(Product product)
         {
             throw new NotImplementedException();
         }

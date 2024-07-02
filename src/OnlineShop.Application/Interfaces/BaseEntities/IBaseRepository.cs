@@ -8,7 +8,7 @@ namespace OnlineShop.Application.Interfaces.BaseEntities
         Task<T> CreateAsync(T model);
         Task<PagedResponse<IQueryable<T>>> GetAllAsync(QueryObject query);
         Task<T?> GetByIdAsync(Guid id);
-        Task<T> UpdateAsync();
+        Task<T> UpdateAsync(T model);
         Task<T?> DeleteAsync(Guid id);
     }
 }

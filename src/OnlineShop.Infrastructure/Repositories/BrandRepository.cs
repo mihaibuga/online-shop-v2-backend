@@ -52,7 +52,7 @@ namespace OnlineShop.Infrastructure.Repositories
 					.FirstOrDefaultAsync(brand => brand.Id == id);
 		}
 
-		public Task<Brand> UpdateAsync()
+		public Task<Brand> UpdateAsync(Brand model)
 		{
 			throw new NotImplementedException();
 		}

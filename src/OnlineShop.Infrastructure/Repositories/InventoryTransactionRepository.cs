@@ -51,7 +51,7 @@ namespace OnlineShop.Infrastructure.Repositories
 					.FirstOrDefaultAsync(it => it.Id == id);
 		}
 
-		public Task<InventoryTransaction> UpdateAsync()
+		public Task<InventoryTransaction> UpdateAsync(InventoryTransaction model)
 		{
 			throw new NotImplementedException();
 		}

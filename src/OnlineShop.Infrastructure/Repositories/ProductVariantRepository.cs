@@ -51,7 +51,7 @@ namespace OnlineShop.Infrastructure.Repositories
 					.FirstOrDefaultAsync(pv => pv.Id == id);
 		}
 
-		public Task<ProductVariant> UpdateAsync()
+		public Task<ProductVariant> UpdateAsync(ProductVariant model)
 		{
 			throw new NotImplementedException();
 		}
