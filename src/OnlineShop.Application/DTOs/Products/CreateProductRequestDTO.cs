@@ -11,6 +11,6 @@ namespace OnlineShop.Application.DTOs.Products
 
 		[Required]
 		public decimal Price { get; set; }
-		public IEnumerable<IFormFile>? ProductImages { get; set; }
+		public IList<IFormFile>? ProductImages { get; set; }
     }
 }
