@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Application.DTOs.AppFiles;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Files;
-using OnlineShop.Domain.Entities.Users;
 
 namespace OnlineShop.API.Controllers
 {
@@ -25,6 +25,14 @@ namespace OnlineShop.API.Controllers
             var savedFile = await _appFileService.SaveFileAsync(fileAsset);
 
             return Ok(savedFile);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAll([FromQuery] ProductQueryObject query)
+        {
+            var appFiles = await _appFileService.GetAllAsync(query);
+            return Ok(appFiles);
         }
     }
 }

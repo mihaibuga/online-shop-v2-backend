@@ -1,4 +1,7 @@
 ﻿using OnlineShop.Application.DTOs.AppFiles;
+using OnlineShop.Application.Helpers.QueryObjects;
+using OnlineShop.Application.Wrappers;
+using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.Interfaces.Files
 {
@@ -6,5 +9,6 @@ namespace OnlineShop.Application.Interfaces.Files
     {
         Task<object> SaveFileAsync(FileAsset file);
         Task<object> SaveFilesAsync(IList<FileAsset> fileAssets);
+        Task<PagedResponse<IQueryable<AppFile>>> GetAllAsync(QueryObject query);
     }
 }

@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OnlineShop.Application.DTOs.AppFiles;
 using OnlineShop.Application.Helpers;
+using OnlineShop.Application.Helpers.QueryObjects;
 using OnlineShop.Application.Interfaces.Files;
+using OnlineShop.Application.Wrappers;
 using OnlineShop.Domain.Entities;
 
 namespace OnlineShop.Application.Services
@@ -74,6 +77,21 @@ namespace OnlineShop.Application.Services
             {
                 return e;
             }
+        }
+
+        public async Task<PagedResponse<IQueryable<AppFile>>> GetAllAsync(QueryObject query)
+        {
+            var response = await _appFileRepository.GetAllAsync(query);
+            var responseDataAsList = await response.Data.ToListAsync();
+            var newData = responseDataAsList.AsQueryable();
+
+            var newResponse = new PagedResponse<IQueryable<AppFile>>(newData, response.PageNumber, response.PageSize);
+            newResponse.TotalRecords = response.TotalRecords;
+            newResponse.TotalPages = response.TotalPages;
+            newResponse.IsNextPage = response.IsNextPage;
+            newResponse.IsPreviousPage = response.IsPreviousPage;
+
+            return newResponse;
         }
     }
 }
