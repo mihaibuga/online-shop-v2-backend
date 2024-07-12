@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using OnlineShop.Infrastructure;
 using System.Text.Json.Serialization;
@@ -34,6 +35,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
+// Serve static files from the "Uploads" directory
+var envFileStorageFolderName = builder.Configuration.GetSection("FileStorage");
+var uploadsPath = Path.Combine(
+    builder.Environment.ContentRootPath,
+    envFileStorageFolderName.Value != null
+        ? envFileStorageFolderName.Value
+        : "Uploads"
+    );
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
 app.UseCors(x => x
     .WithOrigins("http://localhost:5296", "https://localhost:7065/")
     //.SetIsOriginAllowedToAllowWildcardSubdomains()
@@ -43,6 +60,8 @@ app.UseCors(x => x
     //.WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS"));
     //.SetPreflightMaxAge(TimeSpan.FromSeconds(3600)));
     .SetIsOriginAllowed(origin => true));
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
