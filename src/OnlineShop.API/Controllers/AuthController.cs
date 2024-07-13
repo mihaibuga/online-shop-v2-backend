@@ -197,12 +197,14 @@ namespace OnlineShop.API.Controllers
 
                         if (result.Succeeded)
                         {
+                            IList<string>? existingUserRoles = await _userManager.GetRolesAsync(existingUser);
                             return Ok(
                                 new
                                 {
                                     UserName = existingUser.UserName != null ? existingUser.UserName : string.Empty,
                                     Email = existingUser.Email != null ? existingUser.Email : string.Empty,
-                                    Token = await _tokenService.CreateToken(existingUser)
+                                    Token = await _tokenService.CreateToken(existingUser),
+                                    Role = existingUserRoles.First()
                                 }
                             );
                         }
@@ -228,65 +230,68 @@ namespace OnlineShop.API.Controllers
 
                 //Check if google email is already used
                 AppUser? existingUserByGmail = await _userManager.FindByEmailAsync(googleUserDto.Email);
-
                 if (existingUserByGmail != null)
                 {
+                    IList<string>? existingUserRoles = await _userManager.GetRolesAsync(existingUserByGmail);
+
                     return Ok(
                             new NewUserDto
                             {
                                 UserName = existingUserByGmail.UserName != null ? existingUserByGmail.UserName : string.Empty,
                                 Email = existingUserByGmail.Email != null ? existingUserByGmail.Email : string.Empty,
-                                Token = await _tokenService.CreateToken(existingUserByGmail)
+                                Token = await _tokenService.CreateToken(existingUserByGmail),
+                                Role = existingUserRoles.First()
                             }
                         );
                 }
-                else
+
+                //Check if username is already used
+                AppUser? existingUserByUserName = await _userManager.FindByNameAsync(googleUserDto.Username);
+                if (existingUserByUserName != null)
                 {
-                    //Check if username is already used
-                    AppUser? existingUserByUserName = await _userManager.FindByNameAsync(googleUserDto.Username);
-                    if (existingUserByUserName != null)
+                    IList<string>? existingUserRoles = await _userManager.GetRolesAsync(existingUserByUserName);
+                    return Ok(
+                        new NewUserDto
+                        {
+                            UserName = existingUserByUserName.UserName != null ? existingUserByUserName.UserName : string.Empty,
+                            Email = existingUserByUserName.Email != null ? existingUserByUserName.Email : string.Empty,
+                            Token = await _tokenService.CreateToken(existingUserByUserName),
+                            Role = existingUserRoles.First()
+                        }
+                    );
+                }
+
+                AppUser? appUser = new AppUser
+                {
+                    UserName = googleUserDto.Username,
+                    Email = googleUserDto.Email
+                };
+
+                IdentityResult? createdUser = await _userManager.CreateAsync(appUser);
+
+                if (createdUser.Succeeded)
+                {
+                    //Associate user to role
+                    IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.User);
+
+                    if (roleResult.Succeeded)
                     {
+                        IList<string>? existingUserRoles = await _userManager.GetRolesAsync(appUser);
                         return Ok(
                             new NewUserDto
                             {
-                                UserName = existingUserByUserName.UserName != null ? existingUserByUserName.UserName : string.Empty,
-                                Email = existingUserByUserName.Email != null ? existingUserByUserName.Email : string.Empty,
-                                Token = await _tokenService.CreateToken(existingUserByUserName)
+                                UserName = appUser.UserName,
+                                Email = appUser.Email,
+                                Token = await _tokenService.CreateToken(appUser),
+                                Role = existingUserRoles.First()
                             }
                         );
                     }
 
-                    AppUser? appUser = new AppUser
-                    {
-                        UserName = googleUserDto.Username,
-                        Email = googleUserDto.Email
-                    };
-
-                    IdentityResult? createdUser = await _userManager.CreateAsync(appUser);
-
-                    if (createdUser.Succeeded)
-                    {
-                        //Associate user to role
-                        IdentityResult? roleResult = await _userManager.AddToRoleAsync(appUser, UserRoles.User);
-
-                        if (roleResult.Succeeded)
-                        {
-                            return Ok(
-                                new NewUserDto
-                                {
-                                    UserName = appUser.UserName,
-                                    Email = appUser.Email,
-                                    Token = await _tokenService.CreateToken(appUser)
-                                }
-                            );
-                        }
-
-                        return StatusCode(500, roleResult.Errors);
-                    }
-
-                    return StatusCode(500, createdUser.Errors);
+                    return StatusCode(500, roleResult.Errors);
                 }
 
+                return StatusCode(500, createdUser.Errors);
             }
             catch (Exception e)
             {
