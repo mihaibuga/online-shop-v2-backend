@@ -45,6 +45,12 @@ var uploadsPath = Path.Combine(
         ? envFileStorageFolderName.Value
         : "Uploads"
     );
+
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),
